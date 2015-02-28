@@ -1,197 +1,150 @@
-[![Fuel UX](https://s3.amazonaws.com/fuelux/logo-gray.png)](http://exacttarget.github.com/fuelux)
+#[Fuel UX](http://getfuelux.com/)
+[![Bower version](https://badge.fury.io/bo/fuelux.svg)](http://badge.fury.io/bo/fuelux)
+[![Build Status](https://api.travis-ci.org/ExactTarget/fuelux.svg?branch=master)](http://travis-ci.org/ExactTarget/fuelux)
+[![devDependency Status](https://david-dm.org/exacttarget/fuelux/dev-status.svg)](https://david-dm.org/exacttarget/fuelux#info=devDependencies)
 
-Fuel UX extends Twitter Bootstrap with additional lightweight JavaScript controls.
-Other benefits include easy installation into web projects, integrated scripts for customizing Bootstrap and Fuel UX,
-simple updates, and solid optimization for deployment. All functionality is covered by live documentation and unit tests.
+[![Selenium Test Status](https://saucelabs.com/browser-matrix/fuelux.svg)](https://saucelabs.com/u/fuelux)
 
-[![Selenium Test Status](https://saucelabs.com/buildstatus/fuelux)](https://saucelabs.com/u/fuelux)
+Fuel UX extends [Bootstrap 3](https://github.com/twbs/bootstrap) with additional lightweight JavaScript controls. It is actively maintained by [members of Salesforce Marketing Cloud,](https://github.com/orgs/ExactTarget/people) with the support and involvement of the community.
 
-[![Build Status](https://secure.travis-ci.org/ExactTarget/fuelux.png?branch=master)](http://travis-ci.org/ExactTarget/fuelux)
+To get started, check out <http://getfuelux.com>!
 
-## Features
+## Table of contents
 
-Fuel UX provides all of the styles and plugins from the revolutionary [Twitter Bootstrap](http://twitter.github.com/bootstrap) project, with the following additions:
+ * [Quick start](#quick-start)
+ * [Bugs and feature requests](#bugs-and-feature-requests)
+ * [Documentation](#documentation)
+ * [Contributing](#contributing)
+ * [Developing](#developing)
+ * [Community](#community)
+ * [Copyright and license](#copyright-and-license)
 
-* Fuel UX JavaScript controls (with unit tests) [see them live](http://exacttarget.github.com/fuelux)
-  * Checkbox - _consistent cross-browser cross-platform look and feel for checkbox elements_
-  * Combobox - _combines input and dropdown for easy and flexible data selection_
-  * Datagrid - _renders data in a table with paging, sorting, and searching_
-  * Pillbox - _manages selected items with color-coded text labels_
-  * Radio - _consistent cross-browser cross-platform look and feel for radio elements_
-  * Search - _combines input and button for integrated search interaction_
-  * Select - _extends button dropdown with the ability to set and retrieve the selected item_
-  * Spinner - _provides convenient numeric input with increment and decrement buttons_
-  * Tree - _renders data in a tree, supporting caching and optional multi-selection_
-  * Wizard - _displays a multi-step process to be completed in a specific order_
-<p>
-* One-step installation and updates through [volo](https://github.com/volojs/volo)
-* [AMD](http://requirejs.org/docs/whyamd.html) compatibility for modular structure and deployment optimization
-* [Grunt](https://github.com/cowboy/grunt)-based build script to easily create custom distribution files
-* Namespaced CSS (just add a `fuelux` class) for safe use on existing sites
+## Quick start
 
-## Getting Started
-* `git clone git://github.com/ExactTarget/fuelux.git`
-* Default Fuel UX files for production use are located in the [dist](https://github.com/ExactTarget/fuelux/tree/master/dist) directory
-* To customize, modify the JS and LESS files under [src](https://github.com/ExactTarget/fuelux/tree/master/src) then run `grunt` to regenerate your [dist](https://github.com/ExactTarget/fuelux/tree/master/dist) directory (more below)
+Fuel UX can be used with an existing page via CDN or installed in a project.
 
-## Documentation and Examples
+Read the [Getting started page](http://getfuelux.com/getting-started.html) for more detailed information on the framework contents, templates, examples, and more.
 
-### Live docs and demos
+### Use
 
-Hosted on GitHub pages: http://exacttarget.github.com/fuelux
+Add `fuelux` class to the portion of the page using Fuel UX as seen [here](https://github.com/exacttarget/fuelux/blob/master/DETAILS.md#using-fuel-ux).
 
-### Rich documentation
+Ensure all the dependencies are included on the page (eg, such as using the CDN as shown below).
+```
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="//www.fuelcdn.com/fuelux/3.6.3/css/fuelux.min.css" rel="stylesheet">
 
-Hosted on our [Developer Community](http://code.exacttarget.com/devcenter/home): http://code.exacttarget.com/devcenter/fuel-ux
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.1/js/bootstrap.min.js"></script>
+<script src="//www.fuelcdn.com/fuelux/3.6.3/js/fuelux.min.js"></script>
 
-## Issues and Feature Requests
+```
 
-### Search for or report a bug
+### Install
+A few ways available to install.
 
-Use GitHub issues: https://github.com/ExactTarget/fuelux/issues
+- Request files from [the Fuel UX CDN](http://www.fuelcdn.com/fuelux/3.6.3/)
+- [Download the latest release](https://github.com/exacttarget/fuelux/archive/3.4.0.zip).
+- Clone the repo: `git clone https://github.com/exacttarget/fuelux.git`.
+- Install with [Bower](http://bower.io): `bower install fuelux`.
+- Install with [Volo](https://github.com/volojs/volo): `volo add fuelux`.
 
-### View the roadmap and suggest new ideas
+More details for the above can be found [here](https://github.com/exacttarget/fuelux/blob/master/DETAILS.md#downloading-code).
 
-Visit our UserVoice community: https://fuelux.uservoice.com
+#### What's included
 
-## Release History
+Downloading the zip of FuelUX provides the following directories and files, which are grouped according to file type:
+```
+fuelux/
+├── css/
+│   ├── fuelux.css
+│   ├── fuelux.min.css
+├── js/
+│   ├── fuelux.js
+│   └── fuelux.min.js
+└── fonts/
+    ├── fuelux.eot
+    ├── fuelux.svg
+    ├── fuelux.ttf
+    └── fuelux.woff
+```
+We provide compiled CSS and JS (like `fuelux.*`), as well as compiled and minified CSS and JS (like `fuelux.min.*`) in the `dist` folder. Supporting icons are provided as fonts.
 
-_Fuel UX is semantically versioned: <http://semver.org>_
+### Dependencies
+Fuel UX is dependent upon [Bootstrap 3](https://github.com/twbs/bootstrap) and [jQuery](https://github.com/jquery/jquery). If you installed by cloning the repo or by downloading a .zip archive, you'll also want to grab these things, as it won't work without them.
+- [jQuery](https://github.com/jquery/jquery)
+- [Bootstrap 3](https://github.com/twbs/bootstrap)
 
-### Version 2.3.0 `2013-02-18`
+For other methods of managing dependencies consider [AMD support via require](https://github.com/exacttarget/fuelux/blob/master/DETAILS.md#umd/amd-support).
 
-* Add custom filter support to datagrid
-* Use select control for datagrid page size dropdown
-* Add stepclick event to wizard to support canceling clicks on steps
-* Improve rounded corners of combobox button to match Bootstrap
-* Improve support for installation within Yeoman
-* Upgrade Bootstrap from 2.2.2 to 2.3.0
+## Bugs and Feature Requests
 
-### Version 2.2.1 `2013-02-13`
+Have a bug or a feature request? Please first review the [open issues](https://github.com/ExactTarget/fuelux/issues), then search for existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/ExactTarget/fuelux/issues/new).
 
-* Fix whitespace issue in wizard
-* Improve encapsulation of AMD globals
-* Introduce Testem for cross-browser testing
-* Fix tree datasource reference for local development
-* Upgrade unit tests to be compatible with jQuery 1.9
+For additional assistance connect with the [community](#community).
 
-### Version 2.2.0 `2013-01-04`
+## Documentation
 
-* _New Control_ - checkbox
-* _New Control_ - radio
-* _New Control_ - select
-* _New Control_ - tree
-* _New Control_ - wizard
-* Add stretchHeight option to datagrid
-* Add reload method to datagrid
-* Add enable and disable methods to search control
-* Add enable and disable methods to combobox
-* Add rich methods for getting/setting selected item to combobox
-* Fix triggering of superfluous spinner events
-* Upgrade Bootstrap from 2.2.1 to 2.2.2
+Fuel UX documentation is built with [Jekyll](http://jekyllrb.com) and publicly hosted on GitHub Pages at <http://getfuelux.com>. More details on seting up Jekyll and running docs locally can be found [here](https://github.com/exacttarget/fuelux/blob/master/DETAILS.md#running-docs-locally).
 
-### Version 2.1.1 `2012-11-10`
+### Previous releases
 
-* Allow setting spinner value to zero
-* Fix search control keyboard operation in IE8
-
-### Version 2.1.0 `2012-10-31`
-
-* Upgrade Bootstrap from 2.1.1 to 2.2.1
-
-### Version 2.0.2 `2012-10-30`
-
-* Ignore click on disabled search button
-* Make cursor consistent on disabled spinner buttons
-* Improve live docs to show disabled states where available
-* Complete datagrid unit test coverage
-
-### Version 2.0.1 `2012-10-05`
-
-* Fix loader.js (used for non-AMD pages) to be synchronous
-
-### Version 2.0.0 `2012-09-28`
-
-* First public release of Fuel UX
+[Documentation for v2.6](http://getfuelux.com/2.6/) has been made available for the time being while folks transition to Bootstrap 3. You can download 2.6 updates (bug fixes only) from the [fuelux2 branch](https://github.com/ExactTarget/fuelux/tree/fuelux2).
 
 ## Contributing
-Before writing code, we suggest you [search for issues](https://github.com/ExactTarget/fuelux/issues?state=open)
-or [create a new one](https://github.com/ExactTarget/fuelux/issues/new) to confirm where your contribution fits into
+Before writing code, we suggest you [search for issues](https://github.com/ExactTarget/fuelux/issues?state=open) or [create a new one](https://github.com/ExactTarget/fuelux/issues/new) to confirm where your contribution fits into
 our roadmap.
 
-In lieu of a formal style guide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [grunt](https://github.com/cowboy/grunt).
+Please do not edit or commit files in the `dist` directory. You'll find source files in the respective `js`, `less`, and `fonts` directory. Project maintainers will commit files in the `dist` directory from time to time. Details on compiling CSS and JavasScript can be found [here](https://github.com/exacttarget/fuelux/blob/master/DETAILS.md#compiling-code).
 
-More about [Contributing to Fuel UX](https://github.com/ExactTarget/fuelux/wiki/Contributing-to-Fuel-UX)
+Prior to submitting a pull request, please run `grunt` to lint & test your code. All pull requests are validated via [Travis CI](https://travis-ci.org/). If the tests fail unexpectedly feel free to [trigger a restart](https://github.com/exacttarget/fuelux/blob/master/DETAILS.md#travis-ci).
 
-### Important notes
-Please don't edit files in the `dist` directory as they are generated via grunt. You'll find source code in the `src` directory!
+Take care to maintain the existing coding style (tabs, clarity over brevity, declarative markup, semicolons, etc).
 
-While grunt can run the included unit tests via PhantomJS, this isn't a substitute for the real thing. Please be sure to test the `test/*.html` unit test file(s) in real browsers as well.
+Please review the [Salesforce Marketing Cloud style guide](https://github.com/ExactTarget/javascript) if you have any questions.
 
-More about [Installing grunt and PhantomJS](https://github.com/ExactTarget/fuelux/wiki/Installing-grunt-and-PhantomJS)
+## Developing
 
-## The Fuel UX Philosophy
+Be sure to add unit tests for any new or changed functionality.
 
-Our aim is to provide a suite of related but independent projects that help web developers integrate, manage, and customize quality libraries and utilities to more efficiently develop, maintain, test, and distribute their projects.  Any improvements or fixes we make to the open source projects we use will be contributed upstream if they are useful to the rest of the community.
+To serve the test page and lint your changes run `grunt serve` while developing. View the test page at [http://localhost:8000/test/](http://localhost:8000/test/). The `serve` task will run lint and unit tests against saved code.
 
-## Acknowledgements
+While grunt can run the included unit tests via PhantomJS, this isn't a substitute for running tests across a variety of browsers and environments. Please be sure to test in as many of the browsers listed in `sauce_browsers.yml` as you can before contributing.
 
-We are grateful to the maintainers, contributors, and sponsors of the following technologies which make FuelUX possible:
+Read more about [contributing to FuelUX](https://github.com/ExactTarget/fuelux/wiki/Contributing-to-Fuel-UX)
 
-* [jQuery](http://jquery.com) (Library for DOM, events, animation, and AJAX)
+## Community
 
-* [Twitter Bootstrap](http://twitter.github.com/bootstrap) (Modern UI components and interactions)
+Keep track of development and community news.
 
-* [LESS](http://lesscss.org) and [recess](http://twitter.github.com/recess) (Stylesheet definition and management)
+- Fuel UX, API's, and building with other Salesforce Marketing Cloud products visit [Code@](https://code.exacttarget.com/).
+- Implementation help may be found at Stack Overflow (tagged [`fuelux`](http://stackoverflow.com/questions/tagged/fuelux)).
+- Follow [@FuelUX on Twitter](https://twitter.com/fuelux).
 
-* [RequireJS](http://requirejs.org) and [volo](https://github.com/volojs/volo) (Tools for managing modular JavaScript)
+### Philosophy
+Our aim is to provide a suite of related but independent projects that help web developers integrate, manage, and customize quality libraries and utilities to more efficiently develop, maintain, test, and distribute their projects.  Any improvements or fixes we make to the open source projects, we use will be contributed upstream if they are useful to the rest of the community.
 
-* [grunt](https://github.com/cowboy/grunt) (Build tool for JavaScript projects)
+|Project Maintainers (a-z) | |
+|:----|----:|
+|Stephen James | [![tweetllama on Twitter](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertobird-sm.png)](http://twitter.com/tweetllama) [![interactivellama on Github](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertocat-sm.png)](http://github.com/interactivellama)|
+|Christopher McCulloh | [![@cmcculloh on Twitter](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertobird-sm.png)](http://twitter.com/cmcculloh) [![cmcculloh on Github](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertocat-sm.png)](http://github.com/cmcculloh) [![cormacmccarthy on Github](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertocat-sm.png)](http://github.com/cormacmccarthy)|
+|Kevin Parkerson  | [![kevinparkerson on Twitter](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertobird-sm.png)](http://twitter.com/kevinparkerson) [![kevinparkerson on Github](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertocat-sm.png)](http://github.com/kevinparkerson)|
+|Stephen Williams | [![swilliamsui on Twitter](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertobird-sm.png)](http://twitter.com/swilliamsui) [![swilliamset on Github](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertocat-sm.png)](http://github.com/swilliamset)|
+|Dave Woodward | [![futuremint on Twitter](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertobird-sm.png)](http://twitter.com/futuremint) [![futuremint on Github](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertocat-sm.png)](http://github.com/futuremint)|
 
-##Authors
+|Creator | |
+|:----|----:|
+|Adam Alexander | [![adamalex on Twitter](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertobird-sm.png)](http://twitter.com/adamalex) [![adamalex on Github](https://raw.githubusercontent.com/ExactTarget/fuelux/gh-pages/invertocat-sm.png)](http://github.com/adamalex) |
 
-**Adam Alexander**
+Special thanks to [major contributors](https://github.com/exacttarget/fuelux/blob/master/DETAILS.md#contributors) and [active contributors](https://github.com/ExactTarget/fuelux/graphs/contributors).
 
-+ http://twitter.com/adamalex
-+ http://github.com/adamalex
+And thank you to all those that have submitted issues and contributed to this library.
 
-**Matt Beard**
+## Copyright and License
 
-+ http://github.com/mbeard
+Copyright &copy; 2012-2014 Salesforce Marketing Cloud, Inc.
 
-**Bryan Kohlmeier**
+View [BSD-3 license](https://github.com/ExactTarget/fuelux/blob/master/LICENSE).
 
-+ http://github.com/bkohlmeier
-
-**Kevin Parkerson**
-
-+ http://github.com/kevinparkerson
-
-**Christopher McCulloh**
-
-+ http://github.com/cmcculloh
-
-**David Waltz**
-
-+ https://github.com/dwaltz
-
-**Dustin McCormick**
-
-+ http://twitter.com/djmccormick
-+ http://github.com/djmccormick
-
-## Copyright and license
-
-Copyright (c) 2012 ExactTarget
-
-Licensed under the MIT License (the "License");
-you may not use this work except in compliance with the License.
-You may obtain a copy of the License in the COPYING file.
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/8b519d39e18063752f24876583a6526b "githalytics.com")](http://githalytics.com/ExactTarget/fuelux)

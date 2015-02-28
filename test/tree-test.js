@@ -1,153 +1,340 @@
 /*global QUnit:false, module:false, test:false, asyncTest:false, expect:false*/
 /*global start:false, stop:false ok:false, equal:false, notEqual:false, deepEqual:false*/
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
+define(function (require) {
+	var $ = require('jquery');
+	var html = require('text!test/markup/tree-markup.html');
 
-require(['jquery', 'fuelux/tree'], function($) {
+	$('body').append(html);
 
-	module("Fuel UX tree");
+	require('bootstrap');
+	require('fuelux/tree');
+
+	module("Fuel UX Tree", {
+		setup: function () {
+			var callLimit = 50;
+			var callCount = 0;
+
+			this.dataSource = function (options, callback) {
+				if (callCount >= callLimit) {
+					callback({
+						data: [
+							{
+								"name": "Convex and Concave",
+								"type": "item",
+								"attr": {
+									"id": "item4"
+								}
+							}
+						]
+					}, 400);
+					return;
+				}
+
+				callCount++;
+
+				callback({
+					data: [
+						{
+							name: 'Ascending and Descending',
+							type: 'folder',
+							attr: {
+								id: 'folder1'
+							}
+						},
+						{
+							name: 'Sky and Water I (with custom icon)',
+							type: 'item',
+							attr: {
+								id: 'item1',
+								'data-icon': 'glyphicon glyphicon-file'
+							}
+						},
+						{
+							name: 'Drawing Hands',
+							type: 'folder',
+							attr: {
+								id: 'folder2',
+								'data-children': false
+							}
+						},
+						{
+							name: 'Waterfall',
+							type: 'item',
+							attr: {
+								id: 'item2'
+							}
+						},
+						{
+							name: 'Belvedere',
+							type: 'folder',
+							attr: {
+								id: 'folder3'
+							}
+						},
+						{
+							name: 'Relativity (with custom icon)',
+							type: 'item',
+							attr: {
+								id: 'item3',
+								'data-icon': 'glyphicon glyphicon-picture'
+							}
+						},
+						{
+							name: 'House of Stairs',
+							type: 'folder',
+							attr: {
+								id: 'folder4'
+							}
+						},
+						{
+							name: 'Convex and Concave',
+							type: 'item',
+							attr: {
+								id: 'item4'
+							}
+						}
+					]
+				});
+			};
+
+			this.textDataSource = function (options, callback) {
+				callback({
+					data: [
+						{
+							text: 'node text',
+							type: 'folder',
+							attr: {
+								id: 'folder1'
+							}
+						}
+					]
+				});
+			};
+		}
+	});
 
 	test("should be defined on jquery object", function () {
-		ok($(document.body).tree, 'tree method is defined');
+		ok($().tree, 'tree method is defined');
 	});
 
 	test("should return element", function () {
-		ok($(document.body).tree({ dataSource: emptyDataSource })[0] === document.body, 'document.body returned');
+		var $tree = $(html);
+		ok($tree.tree() === $tree, 'tree should be initialized');
 	});
 
-	asyncTest("Tree should be populated by items on initialization", function () {
+	test("should have correct defaults", function correctDefaults() {
+		var $tree = $(html);
 
-		var $tree = $(treeHTML).tree({ dataSource: stubDataSource }).on('loaded', function () {
+		var defaults = $tree.tree.defaults;
 
-			equal($tree.find('.tree-folder').length, 3, 'Initial set of folders have been added');
-			equal($tree.find('.tree-item').length, 3, 'Initial set of items have been added');
+		equal(defaults.multiSelect, false, 'multiSelect defaults to false');
+		equal(defaults.cacheItems, true, 'cacheItems defaults to true');
+		equal(defaults.folderSelect, true, 'folderSelect defaults to true');
+		equal(defaults.itemSelect, true, 'itemSelect defaults to true');
+		equal(defaults.ignoreRedundantOpens, false, 'ignoreRedundantOpens defaults to false');
+		equal(defaults.disclosuresUpperLimit, 0, 'disclosuresUpperLimit defaults to 0');
+		ok(defaults.dataSource, 'dataSource exists by default');
+	});
 
+	test("should call dataSource correctly", function () {
+		var $tree = $(html);
+		$tree.tree({
+			dataSource: function (options, callback) {
+				ok(1 === 1, 'dataSource function called prior to rendering');
+				equal(typeof options, 'object', 'dataSource provided options object');
+				equal(typeof callback, 'function', 'dataSource provided callback function');
+				callback({
+					data: []
+				});
+			}
+		});
+	});
+
+	test("Tree should be populated by items on initialization", function () {
+		var $tree = $(html).find('#MyTree');
+
+		$tree.tree({
+			dataSource: this.dataSource
+		});
+
+		equal($tree.find('.tree-branch').length, 5, 'Initial set of folders have been added');
+		equal($tree.find('.tree-item').length, 5, 'Initial set of items have been added');
+	});
+
+	test("Folder should populate when opened", function () {
+		var $tree = $(html).find('#MyTree');
+		var $selNode;
+
+		$tree.tree({
+			dataSource: this.dataSource
+		});
+
+		$selNode = $tree.find('.tree-branch:eq(1)');
+		$tree.tree('openFolder', $selNode.find('.tree-branch-name'));
+		equal($selNode.find('.tree-branch-children > li').length, 8, 'Folder has been populated with items/sub-folders');
+
+		$tree = $(html).find('#MyTreeSelectableFolder');
+
+		$tree.tree({
+			dataSource: this.dataSource,
+			folderSelect: true
+		});
+
+		$selNode = $tree.find('.tree-branch:eq(1)');
+		$tree.tree('openFolder', $selNode.find('.tree-branch-header'));
+		equal($selNode.find('.tree-branch-children > li').length, 4, 'Folder has been populated with sub-folders');
+	});
+
+	test("Single item/folder selection works as designed", function () {
+		var $tree = $(html).find('#MyTree');
+
+		$tree.tree({
+			dataSource: this.dataSource
+		});
+
+		$tree.tree('selectItem', $tree.find('.tree-item:eq(1)'));
+		equal($tree.tree('selectedItems').length, 1, 'Return single selected value');
+		$tree.tree('selectItem', $tree.find('.tree-item:eq(2)'));
+		equal($tree.tree('selectedItems').length, 1, 'Return new single selected value');
+
+		$tree = $(html).find('#MyTreeSelectableFolder');
+
+		$tree.tree({
+			dataSource: this.dataSource,
+			folderSelect: true
+		});
+
+		$tree.tree('selectItem', $tree.find('.tree-branch-name:eq(1)'));
+		equal($tree.tree('selectedItems').length, 1, 'Return single selected value');
+		$tree.tree('selectItem', $tree.find('.tree-branch-name:eq(2)'));
+		equal($tree.tree('selectedItems').length, 1, 'Return new single selected value');
+	});
+
+	test("Multiple item/folder selection works as designed", function () {
+		var $tree = $(html).find('#MyTree');
+
+		$tree.tree({
+			dataSource: this.dataSource,
+			multiSelect: true
+		});
+
+		$tree.tree('selectItem', $tree.find('.tree-item:eq(1)'));
+		equal($tree.tree('selectedItems').length, 1, 'Return single selected value');
+		$tree.tree('selectItem', $tree.find('.tree-item:eq(2)'));
+		equal($tree.tree('selectedItems').length, 2, 'Return multiple selected values');
+		$tree.tree('selectItem', $tree.find('.tree-item:eq(1)'));
+		equal($tree.tree('selectedItems').length, 1, 'Return single selected value');
+
+		$tree = $(html).find('#MyTreeSelectableFolder');
+
+		$tree.tree({
+			dataSource: this.dataSource,
+			multiSelect: true,
+			folderSelect: true
+		});
+
+		$tree.tree('selectFolder', $tree.find('.tree-branch-name:eq(1)'));
+		equal($tree.tree('selectedItems').length, 1, 'Return single selected value');
+		$tree.tree('selectFolder', $tree.find('.tree-branch-name:eq(2)'));
+		equal($tree.tree('selectedItems').length, 2, 'Return multiple selected values');
+		$tree.tree('selectFolder', $tree.find('.tree-branch-name:eq(1)'));
+		equal($tree.tree('selectedItems').length, 1, 'Return single selected value');
+	});
+
+	test("should not allow selecting items if disabled", function () {
+		var $tree = $(html).find('#MyTree');
+
+		$tree.tree({
+			dataSource: this.dataSource,
+			itemSelect: false
+		});
+
+		$tree.tree('selectItem', $tree.find('.tree-item:eq(1)'));
+		equal($tree.tree('selectedItems').length, 0, 'Return no value');
+	});
+
+	test("should not allow selecting folders if disabled", function () {
+		var $tree = $(html).find('#MyTree');
+
+		$tree.tree({
+			dataSource: this.dataSource,
+			folderSelect: false
+		});
+
+		$tree.tree('selectFolder', $tree.find('.tree-branch-name:eq(1)'));
+		equal($tree.tree('selectedItems').length, 0, 'Return no value');
+	});
+
+	asyncTest("should disclose visible folders", function () {
+		var $tree = $('body').find('#MyTree');
+
+		$tree.tree({
+			dataSource: this.dataSource
+		});
+
+		var toBeOpened = $tree.find(".tree-branch:not('.tree-open, .hide')").length;
+		equal($tree.find(".tree-branch.tree-open:not('.hide')").length, 0, '0 folders open');
+
+		$tree.one('disclosedVisible.fu.tree', function () {
+			equal($tree.find(".tree-branch.tree-open:not('.hide')").length, toBeOpened, toBeOpened + ' folders open');
 			start();
 		});
 
+		$tree.tree('discloseVisible');
 	});
 
-	asyncTest("Folders should be populated when folder is clicked", function () {
+	asyncTest("should disclose all folders up to limit, and then close them, then open them all", function () {
+		var $tree = $('body').find('#MyTree2');
 
-		var $tree = $(treeHTML).tree({ dataSource: stubDataSource }).on('loaded', function () {
+		$tree.tree({
+			dataSource: this.dataSource,
+			disclosuresUpperLimit: 2
+		});
 
-			var $folder = $tree.find('.tree-folder:eq(1)');
-			var event = 0;
+		equal($tree.find(".tree-branch.tree-open:not('.hide')").length, 0, '0 folders open');
+		$tree.one('exceededDisclosuresLimit.fu.tree', function exceededDisclosuresLimit() {
+			equal($tree.find(".tree-branch.tree-open:not('.hide')").length, 20, '20 folders open');
 
-			$tree.off('loaded');
+			$tree.one('closedAll.fu.tree', function closedAll() {
+				equal($tree.find(".tree-branch.tree-open:not('.hide')").length, 0, '0 folders open');
 
-			$tree.on('opened', function () {
-				event++;
-			});
+				$tree.data('ignore-disclosures-limit', true);
 
-			$tree.on('closed', function () {
-				event++;
-			});
-
-			$tree.tree('selectFolder', $folder[0]);
-
-			$tree.on('loaded', function() {
-				$tree.off('loaded');
-
-				equal($folder.find('.tree-folder').length, 2, 'Folders have populated');
-				equal($folder.find('.tree-item').length, 2, 'Items have populated');
-
-				equal(event, 1, 'Open event triggered');
-
-				$tree.tree('selectFolder', $folder[0]);
-				$tree.on('loaded', function() {
-					equal(event, 2, 'Close event triggered');
+				$tree.one('disclosedAll.fu.tree', function exceededDisclosuresLimit() {
+					equal($tree.find(".tree-branch.tree-open:not('.hide')").length, 200, '200 folders open');
 					start();
 				});
+
+				$tree.tree('discloseAll');
 			});
 
+			$tree.tree('closeAll');
 		});
 
+		$tree.tree('discloseAll');
 	});
 
-	asyncTest("Single item selection works as designed", function () {
 
-		var $tree = $(treeHTML).tree({ dataSource: stubDataSource }).on('loaded',function() {
+	test("should destroy control", function () {
+		var $tree = $(html).find('#MyTree');
 
-			var data;
-
-			$tree.on('selected', function (e, items) {
-				data = items.info;
-			});
-
-			$tree.tree('selectItem', $tree.find('.tree-item:eq(1)'));
-			equal(data.length, 1, 'Single item selected');
-			equal($tree.tree('selectedItems').length, 1, 'Return single selected value');
-			$tree.tree('selectItem', $tree.find('.tree-item:eq(2)'));
-			equal(data.length, 1, 'New single item selected');
-			equal($tree.tree('selectedItems').length, 1, 'Return new single selected value');
-
-			start();
+		$tree.tree({
+			dataSource: this.dataSource
 		});
 
+		equal(typeof ($tree.tree('destroy')), 'string', 'returns string (markup)');
+		equal($tree.parent().length, false, 'control has been removed from DOM');
 	});
 
-	asyncTest("Multiple item selection works as designed", function () {
+	test("Tree should accept TEXT as the NAME property in the datasource", function () {
+		var $tree = $(html).find('#MyTree');
 
-		var $tree = $(treeHTML).tree({ dataSource: stubDataSource, multiSelect: true }).on('loaded',function() {
-
-			var data;
-
-			$tree.on('selected', function (e, items) {
-				data = items.info;
-			});
-
-			$tree.tree('selectItem', $tree.find('.tree-item:eq(1)'));
-			equal(data.length, 1, 'Single item selected');
-			equal($tree.tree('selectedItems').length, 1, 'Return single selected value');
-			$tree.tree('selectItem', $tree.find('.tree-item:eq(2)'));
-			equal(data.length, 2, 'Double item selected');
-			equal($tree.tree('selectedItems').length, 2, 'Return multiple selected values');
-			$tree.tree('selectItem', $tree.find('.tree-item:eq(1)'));
-			equal(data.length, 1, 'Duplicate selection');
-
-			start();
+		$tree.tree({
+			dataSource: this.textDataSource
 		});
 
+		$tree.tree('selectFolder', $tree.find('.tree-branch-name:eq(1)'));
+		equal($tree.tree('selectedItems')[0].text, 'node text', 'Param TEXT used in the datasource');
 	});
-
-	var emptyDataSource = {
-		data: function (options, callback) {
-			setTimeout(function () {
-				callback({ data: []});
-			}, 0);
-		}
-	};
-
-	var stubDataSource = {
-		data: function (options, callback) {
-
-			setTimeout(function () {
-				callback({
-					data: [
-						{ name: 'Test Folder 1', type: 'folder', additionalParameters: { id: 'F1' } },
-						{ name: 'Test Folder 1', type: 'folder', additionalParameters: { id: 'F2' } },
-						{ name: 'Test Item 1', type: 'item', additionalParameters: { id: 'I1' } },
-						{ name: 'Test Item 2', type: 'item', additionalParameters: { id: 'I2' } }
-					]
-				});
-			}, 0);
-
-		}
-	};
-
-	var treeHTML =	'<div id="ex-tree" class="tree">' +
-						'<div class = "tree-folder" style="display:none;">' +
-							'<div class="tree-folder-header">' +
-								'<i class="icon-folder-close"></i>' +
-								'<div class="tree-folder-name"></div>' +
-							'</div>' +
-							'<div class="tree-folder-content"></div>' +
-							'<div class="tree-loader" style="display:none"></div>' +
-						'</div>' +
-						'<div class="tree-item" style="display:none;">' +
-							'<i class="tree-dot"></i>' +
-							'<div class="tree-item-name"></div>' +
-						'</div>' +
-					'</div>';
-
 });
